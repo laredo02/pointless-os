@@ -1,14 +1,10 @@
 
-/*
-	Advertencia: esto no sirve para nada: NO tiene ni GDT ni Interrupts ni paging ni na.
-*/
+#include <stdint.h>
 
-#include <stdint.h> // esto lo puedo importar por que son typedefs. No puedo importar na mas pq casi todo usa syscalls y basuras que no tiene mi SO
-
-static const uint16_t COLS = 80, ROWS = 25; // Ni detecta el tamaño de pantalla por que pa que
+static const uint16_t COLS = 80, ROWS = 25;
 uint16_t* video_memory_buffer;
 
-enum vga_colors { // La cpu está en modo compatibilidad, que basura. ESTO PARECE DOS
+enum vga_colors {
 	BLACK 		= 0x0000,
 	BLUE 		= 0x1 << 8,
 	GREEN 		= 0x2 << 8,
@@ -42,27 +38,23 @@ void setCursorLocation (struct cursor_location cursor_location) {
 }
 
 void setConsoleColors (vga_colors foreground_color, vga_colors background_color) {
-	console_settings.colors = foreground_color | (background_color << 4); // https://en.m.wikipedia.org/wiki/VGA_text_mode por si se te complica
+	console_settings.colors = foreground_color | (background_color << 4);
 }
 
 void initConsole (vga_colors foreground_color, vga_colors background_color,
 		    uint16_t cursor_x, uint16_t cursor_y) {
-	video_memory_buffer = (uint16_t *) 0xB8000; // La posición del buffer VGA
-	setConsoleColors(foreground_color, background_color); // esta función no miente
-	setCursorLocation({cursor_x, cursor_y}); // esta tampoco
+	video_memory_buffer = (uint16_t *) 0xB8000;
+	setConsoleColors(foreground_color, background_color);
+	setCursorLocation({cursor_x, cursor_y});
 }
 
-uint16_t strlen (const char *str) { // Cuando no tienes librerias
+uint16_t strlen (const char *str) {
 	int len = 0;
-	while (str[len] != 0) // es triste tener que hacer esto, creo que juesto esa función la podría haber importado. Pero nuca se sabe, mejor no fiarse
+	while (str[len] != 0)
 		len++;
 	return len;
 }
 
-/*
-	Querido juez:
-	Cuando escribí este código, solo yo y dios sabiamos lo que quería decir.
-*/
 void print (const char* str) {
 	for (int i=0; str[i] != 0; i++) {
 		if (str[i] == '\n') {
@@ -81,13 +73,13 @@ void print (const char* str) {
 	}
 }
 
-void printLine (const char* str) { // Porsiaca
+void printLine (const char* str) {
 	print(str);
 	console_settings.cursor_location.y += 1;
 	console_settings.cursor_location.x = 0;
 }
 
-void printWelcomeScreen () { // Probablemente el pico de mi carrera en la programacíon
+void printWelcomeScreen () {
 	initConsole(vga_colors::BRIGTH_CYAN, vga_colors::MAGENTA, 0, 0);
 
 	const char *str = "PointlessOS";
@@ -101,8 +93,8 @@ void printWelcomeScreen () { // Probablemente el pico de mi carrera en la progra
 	print(str);
 }
 
-extern "C" void kernel_main() { // externalizar el símbolo como C pa que no se complique
+extern "C" void kernel_main() {
 	printWelcomeScreen(); 
 	while (1);
-} // es en este momento que uno puede decir que ha hecho un kernel. De 2 líneas
+}
 
