@@ -1,7 +1,7 @@
 
 # PointlessOS
-Sistema Operativo Ultra-Minimalista
+Minimailist Operating System
 
-Cimientos de un sistema operativo. Por ahora no soporta nada mas que escribir texto ASCII en la Pantalla. Soporta diferentes colores de texto y de fondo. Poco a poco lo ire ampliando
+Foundation for an Operative system. Supports ASCII text and displaying background and text in different colors.
 
 
